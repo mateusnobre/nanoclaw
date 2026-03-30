@@ -533,7 +533,12 @@ async function main(): Promise<void> {
       continue;
     }
     channels.push(channel);
-    await channel.connect();
+    try {
+      await channel.connect();
+    } catch (err) {
+      logger.error({ channel: channelName, err }, 'Channel failed to connect — continuing without it');
+      channels.pop();
+    }
   }
   if (channels.length === 0) {
     logger.fatal('No channels connected');
